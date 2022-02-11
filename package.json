@@ -1,7 +1,7 @@
 {
   "name": "create-japa",
   "version": "1.0.0",
-  "description": "Setup japa inside an existing Node.js app",
+  "description": "Setup japa inside an existing Node.js project",
   "main": "build/index.js",
   "files": [
     "build/bin",
@@ -12,7 +12,9 @@
   "exports": {
     ".": "./build/index.js"
   },
-  "bin": "./build/bin/index.js",
+  "bin": {
+    "create-japa": "build/bin/run.js"
+  },
   "scripts": {
     "mrm": "mrm --preset=@adonisjs/mrm-preset",
     "pretest": "npm run lint",
@@ -111,5 +113,13 @@
     "@poppinss/prompts": "^2.0.0",
     "gradient-string": "^2.0.0",
     "mrm-core": "^6.1.7"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/japa/create-japa.git"
+  },
+  "bugs": {
+    "url": "https://github.com/japa/create-japa/issues"
+  },
+  "homepage": "https://github.com/japa/create-japa#readme"
 }
