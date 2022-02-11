@@ -274,6 +274,9 @@ export async function setup() {
    */
   const pkg = packageJson()
   if (!pkg.exists()) {
+    if (projectType === 'JavaScript ESM') {
+      pkg.set('type', 'module')
+    }
     pkg.save()
     logger.action('create').succeeded('package.json')
   }
