@@ -58,13 +58,14 @@
     "core": false,
     "license": "MIT",
     "services": [
-      "circleci"
+      "github-actions"
     ],
     "minNodeVersion": "16.13.1",
     "probotApps": [
       "stale",
       "lock"
-    ]
+    ],
+    "runGhActionsOnWindows": false
   },
   "eslintConfig": {
     "extends": [
