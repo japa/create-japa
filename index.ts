@@ -53,6 +53,8 @@ const ASSERTION_CHOICES = [
     requireCall() {
       return `const { assert } = require('${this.name}')`
     },
+    assertionPlugin: 'assert',
+    assertionPluginCall: 'assert.equal(2 + 2, 4)',
     pluginCall: `assert()`,
   },
   {
@@ -70,6 +72,8 @@ const ASSERTION_CHOICES = [
     requireCall() {
       return `const { expect } = require('${this.name}')`
     },
+    assertionPlugin: 'expect',
+    assertionPluginCall: 'expect(2 + 2).toEqual(4)',
     pluginCall: `expect()`,
   },
   {
@@ -169,6 +173,11 @@ export async function setup() {
    */
   const projectType = await new Prompt().choice('Select the project type', PROJECT_TYPES)
 
+  /**
+   * Should we create a sample project?
+   */
+  const createSampleTest = await new Prompt().confirm('Want us to create a sample test?')
+
   const fileExtension = projectType === 'TypeScript' ? 'ts' : 'js'
   const pluginsList: string[] = []
   const reportersList: string[] = []
@@ -182,6 +191,14 @@ export async function setup() {
 
   const testFileName = `bin/test.${fileExtension}`
   const typesFileName = 'bin/japaTypes.ts'
+
+  const sampleTestFileName =
+    projectType === 'TypeScript' ? 'tests/maths.spec.ts' : 'tests/maths.spec.js'
+  const sampleTestTemplateName =
+    projectType === 'JavaScript' ? 'maths-cjs.spec.txt' : 'maths-esm.spec.txt'
+
+  let assertionPlugin: undefined | string
+  let assertionPluginCall: undefined | string
 
   /**
    * Collect import calls for reporters
@@ -213,6 +230,8 @@ export async function setup() {
     }
 
     pluginsList.push(assertionMatch.pluginCall!)
+    assertionPlugin = assertionMatch.assertionPlugin
+    assertionPluginCall = assertionMatch.assertionPluginCall
   }
 
   /**
@@ -270,6 +289,28 @@ export async function setup() {
   }
 
   /**
+   * Create a sample test for the user
+   */
+  if (createSampleTest) {
+    const sampleTestFile = template(
+      sampleTestFileName,
+      join(__dirname, `./templates/${sampleTestTemplateName}`)
+    )
+
+    sampleTestFile.apply({
+      assertionPlugin: assertionPlugin ? `{ ${assertionPlugin} }` : '',
+      assertionPluginCall: assertionPluginCall ? `${toNewLine([assertionPluginCall], 2)}  ` : '',
+    })
+
+    if (!sampleTestFile.exists()) {
+      sampleTestFile.save()
+      logger.action('create').succeeded(sampleTestFileName)
+    } else {
+      logger.action('create').skipped(sampleTestFileName, 'File already exists')
+    }
+  }
+
+  /**
    * Create empty package.json file if one doesn't exists already
    */
   const pkg = packageJson()
@@ -293,7 +334,7 @@ export async function setup() {
     console.log(
       `${icons.pointer} Run ${logger.colors
         .dim()
-        .underline(`node ${testFileName}`)} to execute tests`
+        .underline(`"node ${testFileName}"`)} to execute tests`
     )
   } else {
     console.log(logger.colors.red(`${icons.cross} Packages installation failed`))
