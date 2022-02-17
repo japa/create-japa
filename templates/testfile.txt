@@ -17,7 +17,7 @@ configure({
     files: ['tests/**/*.spec.${extension}'],
     plugins: [${pluginsList}],
     reporters: [${reportersList}],
-    timeout: 2000,
+    importer: ${importerFunctionCall},
   },
 })
 

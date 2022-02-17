@@ -99,12 +99,15 @@ const ADDITIONAL_PLUGINS = [
 const PROJECT_TYPES = [
   {
     name: 'TypeScript' as const,
+    importerFunctionCall: '(filePath: string) => import(filePath)',
   },
   {
     name: 'JavaScript ESM' as const,
+    importerFunctionCall: '(filePath) => import(filePath)',
   },
   {
     name: 'JavaScript' as const,
+    importerFunctionCall: '(filePath) => require(filePath)',
   },
 ]
 
@@ -199,6 +202,7 @@ export async function setup() {
 
   let assertionPlugin: undefined | string
   let assertionPluginCall: undefined | string
+  const { importerFunctionCall } = PROJECT_TYPES.find(({ name }) => name === projectType) || {}
 
   /**
    * Collect import calls for reporters
@@ -260,6 +264,7 @@ export async function setup() {
     extension: fileExtension,
     pluginsList: pluginsList.join(', '),
     reportersList: reportersList.join(', '),
+    importerFunctionCall,
   })
 
   if (!testFile.exists()) {
