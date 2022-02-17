@@ -3,7 +3,7 @@ ${imports}declare module '@japa/runner' {
     // notify TypeScript about custom context properties
   ${contextProperties}}
 
-  interface Test {
+  interface Test<Context, TestData> {
     // notify TypeScript about custom test properties
   ${testProperties}}
 }
