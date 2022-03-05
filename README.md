@@ -3,6 +3,8 @@
 
 [![github-actions-image]][github-actions-url] [![npm-image]][npm-url] [![license-image]][license-url] [![typescript-image]][typescript-url]
 
+![](./banner.png)
+
 The `create-japa` is a small CLI utility to configure Japa inside an existing Node.js project.
 
 The process involves installing the required packages and creating the neccessary files. The setup works with
