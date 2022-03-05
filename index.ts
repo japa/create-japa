@@ -99,7 +99,7 @@ const ADDITIONAL_PLUGINS = [
 const PROJECT_TYPES = [
   {
     name: 'TypeScript' as const,
-    importerFunctionCall: '(filePath: string) => import(filePath)',
+    importerFunctionCall: '(filePath) => import(filePath)',
   },
   {
     name: 'JavaScript ESM' as const,
