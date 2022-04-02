@@ -46,9 +46,9 @@ const ASSERTION_CHOICES = [
     },
     types: {
       importCall() {
-        return `import { Assert } from '@japa/assert'`
+        return ''
       },
-      tsContextProperties: ['assert: Assert'],
+      tsContextProperties: [],
     },
     requireCall() {
       return `const { assert } = require('${this.name}')`
@@ -62,9 +62,9 @@ const ASSERTION_CHOICES = [
     hint: '(Jest expect)',
     types: {
       importCall() {
-        return `import { Expect } from '@japa/expect'`
+        return ''
       },
-      tsContextProperties: ['expect: Expect'],
+      tsContextProperties: [],
     },
     importCall() {
       return `import { expect } from '${this.name}'`
@@ -121,7 +121,7 @@ const RUNNER = {
 }
 
 /**
- * Converts an array of lines of a flag string
+ * Converts an array of lines to a flat string
  */
 function toNewLine(lines: string[], indentation: number = 0) {
   const spaces = new Array(indentation + 1).join(' ')
@@ -189,7 +189,7 @@ export async function setup() {
   ]
   const tsContextProperties: string[] = []
   const tsTestProperties: string[] = []
-  const tsImports: string[] = []
+  const tsImports: string[] = [`import '@japa/runner'`]
   const packagesToInstall: string[] = ['@japa/runner']
 
   const testFileName = `bin/test.${fileExtension}`
@@ -227,7 +227,8 @@ export async function setup() {
     )
 
     if (assertionMatch.types) {
-      tsImports.push(assertionMatch.types.importCall())
+      const importCall = assertionMatch.types.importCall()
+      importCall && tsImports.push(importCall)
       if (assertionMatch.types.tsContextProperties) {
         tsContextProperties.push(...assertionMatch.types.tsContextProperties)
       }
