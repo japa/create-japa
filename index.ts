@@ -94,6 +94,17 @@ const ADDITIONAL_PLUGINS = [
     },
     pluginCall: `runFailedTests()`,
   },
+  {
+    name: '@japa/api-client' as const,
+    hint: '(A plugin to test API endpoints over HTTP)',
+    importCall() {
+      return `import { apiClient } from '${this.name}'`
+    },
+    requireCall() {
+      return `const { apiClient } = require('${this.name}')`
+    },
+    pluginCall: `apiClient('http://localhost:3333')`,
+  },
 ]
 
 const PROJECT_TYPES = [
