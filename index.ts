@@ -114,7 +114,7 @@ const PROJECT_TYPES = [
   },
   {
     name: 'JavaScript ESM' as const,
-    importerFunctionCall: '(filePath) => import(filePath)',
+    importerFunctionCall: '(filePath) => import(pathToFileURL(filePath).href)',
   },
   {
     name: 'JavaScript' as const,
@@ -248,6 +248,10 @@ export async function setup() {
     pluginsList.push(assertionMatch.pluginCall!)
     assertionPlugin = assertionMatch.assertionPlugin
     assertionPluginCall = assertionMatch.assertionPluginCall
+  }
+
+  if (projectType === 'JavaScript ESM') {
+    imports.push(`import { pathToFileURL } from 'node:url'`)
   }
 
   /**
