@@ -39,7 +39,7 @@
   "devDependencies": {
     "@adonisjs/mrm-preset": "^5.0.3",
     "@adonisjs/require-ts": "^2.0.12",
-    "@types/node": "^18.7.14",
+    "@types/node": "^18.7.16",
     "commitizen": "^4.2.5",
     "copyfiles": "^2.4.1",
     "cz-conventional-changelog": "^3.3.0",
@@ -111,7 +111,7 @@
   "dependencies": {
     "@poppinss/cliui": "^3.0.2",
     "@poppinss/prompts": "^2.0.2",
-    "gradient-string": "^2.0.1",
+    "gradient-string": "^2.0.2",
     "mrm-core": "^7.1.0"
   },
   "repository": {
