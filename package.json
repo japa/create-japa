@@ -1,6 +1,6 @@
 {
   "name": "create-japa",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "description": "Setup japa inside an existing Node.js project",
   "main": "build/index.js",
   "files": [
