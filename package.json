@@ -39,6 +39,7 @@
   "devDependencies": {
     "@adonisjs/mrm-preset": "^5.0.3",
     "@adonisjs/require-ts": "^2.0.13",
+    "@types/gradient-string": "^1.1.2",
     "@types/node": "^18.13.0",
     "commitizen": "^4.3.0",
     "copyfiles": "^2.4.1",

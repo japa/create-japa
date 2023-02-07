@@ -1,7 +1,7 @@
 /*
  * create-japa
  *
- * (c) Harminder Virk <virk@adonisjs.com>
+ * (c) Japa.dev
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -113,12 +113,16 @@ const PROJECT_TYPES = [
     importerFunctionCall: '(filePath) => import(filePath)',
   },
   {
-    name: 'JavaScript ESM' as const,
+    name: 'TypeScript ESM' as const,
     importerFunctionCall: '(filePath) => import(pathToFileURL(filePath).href)',
   },
   {
     name: 'JavaScript' as const,
     importerFunctionCall: '(filePath) => require(filePath)',
+  },
+  {
+    name: 'JavaScript ESM' as const,
+    importerFunctionCall: '(filePath) => import(pathToFileURL(filePath).href)',
   },
 ]
 
@@ -192,7 +196,9 @@ export async function setup() {
    */
   const createSampleTest = await new Prompt().confirm('Want us to create a sample test?')
 
-  const fileExtension = projectType === 'TypeScript' ? 'ts' : 'js'
+  const isTypeScriptProject = ['TypeScript', 'TypeScript ESM'].includes(projectType)
+
+  const fileExtension = isTypeScriptProject ? 'ts' : 'js'
   const pluginsList: string[] = []
   const reportersList: string[] = []
   const imports: string[] = [
@@ -204,10 +210,9 @@ export async function setup() {
   const packagesToInstall: string[] = ['@japa/runner']
 
   const testFileName = `bin/test.${fileExtension}`
-  const typesFileName = 'bin/japaTypes.ts'
+  const typesFileName = 'bin/japa_types.ts'
 
-  const sampleTestFileName =
-    projectType === 'TypeScript' ? 'tests/maths.spec.ts' : 'tests/maths.spec.js'
+  const sampleTestFileName = isTypeScriptProject ? 'tests/maths.spec.ts' : 'tests/maths.spec.js'
   const sampleTestTemplateName =
     projectType === 'JavaScript' ? 'maths-cjs.spec.txt' : 'maths-esm.spec.txt'
 
@@ -250,7 +255,7 @@ export async function setup() {
     assertionPluginCall = assertionMatch.assertionPluginCall
   }
 
-  if (projectType === 'JavaScript ESM') {
+  if (projectType === 'JavaScript ESM' || projectType === 'TypeScript ESM') {
     imports.push(`import { pathToFileURL } from 'node:url'`)
   }
 
@@ -293,7 +298,7 @@ export async function setup() {
   /**
    * Create "japaTypes.ts" file when using typescript
    */
-  if (projectType === 'TypeScript') {
+  if (isTypeScriptProject) {
     const typesFile = template(typesFileName, join(__dirname, './templates/testtypes.txt'))
     typesFile.apply({
       contextProperties: tsContextProperties.length ? `${toNewLine(tsContextProperties, 2)}  ` : '',
@@ -336,7 +341,7 @@ export async function setup() {
    */
   const pkg = packageJson()
   if (!pkg.exists()) {
-    if (projectType === 'JavaScript ESM') {
+    if (projectType === 'JavaScript ESM' || projectType === 'TypeScript ESM') {
       pkg.set('type', 'module')
     }
     pkg.save()
