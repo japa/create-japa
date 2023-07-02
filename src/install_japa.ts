@@ -66,7 +66,7 @@ export class InstallJapa extends BaseCommand {
   /**
    * Packages that should be installed
    */
-  #packageToInstall: string[] = []
+  #packageToInstall: string[] = ['@japa/runner']
 
   /**
    * Fake package install for testing
