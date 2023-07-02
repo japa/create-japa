@@ -7,11 +7,7 @@
 
 The `create-japa` is a small CLI utility to configure Japa inside an existing Node.js project.
 
-The process involves installing the required packages and creating the neccessary files. The setup works with
-
-- TypeScript projects
-- JavaScript projects using CommonJS
-- JavaScript projects using ESM.
+The process involves installing the required packages and creating the necessary files. The setup works with Typescript and JavaScript projects.
 
 ## Usage
 Navigate to the root of your project and run the following command.

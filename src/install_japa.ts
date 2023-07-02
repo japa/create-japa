@@ -395,7 +395,12 @@ export class InstallJapa extends BaseCommand {
       await this.#createSampleTestFiles()
     }
 
+    /**
+     * Create or update the package.json file with test script
+     * and install dependencies
+     */
     await this.#createOrUpdatePkgJson()
+
     this.#printSuccessSticker()
   }
 }
