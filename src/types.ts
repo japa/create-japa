@@ -7,8 +7,11 @@
  * file that was distributed with this source code.
  */
 
-import { Kernel } from '@adonisjs/ace'
-import { InstallJapa } from './src/install_japa.js'
-
-Kernel.defaultCommand = InstallJapa
-export const kernel = Kernel.create()
+export type PluginChoice = {
+  name: string
+  hint?: string
+  namedImport: string
+  importPath: string
+  parameters?: string
+  packagesToInstall?: string[]
+}

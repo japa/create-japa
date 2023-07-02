@@ -1,0 +1,12 @@
+import { test } from '@japa/runner'
+
+test.group('Maths.add', () => {
+  test('add two numbers', ({ {{ assertPlugin }} }) => {
+    // Test logic goes here
+    @if (assertPlugin === 'assert')
+    assert.equal(1 + 1, 2)
+    @else
+    expect(1 + 1).toBe(2)
+    @endif
+  })
+})

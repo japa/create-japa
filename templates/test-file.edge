@@ -1,0 +1,38 @@
+import { configure, processCLIArgs, run } from '@japa/runner'
+@each(importStatement in imports)
+{{{ importStatement }}}
+@end
+
+processCLIArgs(process.argv.splice(2))
+configure({
+  @if (hasBrowserClientPlugin)
+  suites: [
+    {
+      name: 'browser',
+      timeout: 30 * 1000,
+      files: ['tests/browser/**/*.spec.{{ fileExtension }}'],
+    },
+    {
+      name: 'unit',
+      files: ['tests/unit/**/*.spec.{{ fileExtension }}'],
+    }
+  ],
+  @else
+  files: ['tests/**/*.spec.{{ fileExtension }}'],
+  @endif
+  @if (pluginsList.length <= 2)
+  plugins: [{{{ pluginsList.join(', ') }}}],
+  @elseif (pluginsList.length > 2)
+  plugins: [
+    {{{ pluginsList.join(',\n    ') }}},
+  ],
+  @endif
+  @if (shouldAddReportersConfig)
+  reporters: {
+    activated: ['{{ reporters.activated }}'],
+    list: [{{ reporters.list }}],
+  }
+  @endif
+})
+
+run()

@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 
 /*
- * create-japa
+ * @japa/create-japa
  *
- * (c) Harminder Virk <virk@adonisjs.com>
+ * (c) Japa.dev
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-import { setup } from '../index'
+import { kernel } from '../index.js'
 
-setup().catch((error) => console.log({ error }))
+kernel.handle(process.argv.slice(2)).catch(console.error)

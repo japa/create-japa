@@ -1,7 +1,0 @@
-const { test } = require('@japa/runner')
-
-test.group('Maths.add', () => {
-  test('add two numbers', (${assertionPlugin}) => {
-    // Test logic goes here
-  ${assertionPluginCall}})
-})
