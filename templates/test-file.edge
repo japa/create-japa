@@ -27,12 +27,6 @@ configure({
     {{{ pluginsList.join(',\n    ') }}},
   ],
   @endif
-  @if (shouldAddReportersConfig)
-  reporters: {
-    activated: ['{{ reporters.activated }}'],
-    list: [{{ reporters.list }}],
-  }
-  @endif
 })
 
 run()

@@ -9,12 +9,7 @@
 
 import { BaseCommand, args } from '@adonisjs/ace'
 import gradient from 'gradient-string'
-import {
-  ADDITIONAL_PLUGINS,
-  ASSERTION_CHOICES,
-  PROJECT_TYPES,
-  REPORTER_CHOICES,
-} from './constants.js'
+import { ADDITIONAL_PLUGINS, ASSERTION_CHOICES, PROJECT_TYPES } from './constants.js'
 import { dirname, join, relative } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { Edge } from 'edge.js'
@@ -28,8 +23,8 @@ export class InstallJapa extends BaseCommand {
   static commandName = 'create-japa'
   static description = 'Install Japa testing framework'
 
-  @args.string({ description: 'Path to the project root', default: cwd() })
-  declare projectRoot: string
+  @args.string({ description: 'Destination', default: cwd() })
+  declare destination: string
 
   static #isPackageInstallFaked = false
 
@@ -120,16 +115,6 @@ export class InstallJapa extends BaseCommand {
   }
 
   /**
-   * Ask user to select reporters to use
-   */
-  #promptReporters() {
-    return this.prompt.multiple('Select the reporters to use', REPORTER_CHOICES, {
-      validate: (selections) => (!selections.length ? 'Select a reporter to continue' : true),
-      result: (selections) => this.#findSelectionByName(REPORTER_CHOICES, selections),
-    })
-  }
-
-  /**
    * Prompt to select an assertion library. Assertion library
    * is optional
    */
@@ -183,41 +168,6 @@ export class InstallJapa extends BaseCommand {
   }
 
   /**
-   * Prepare bindings for edge file reporters configuration
-   */
-  #prepareReportersConfig(reporters: PluginChoice[]) {
-    const hasSpecReporter = this.#hasPickedPlugin(reporters, 'spec-reporter')
-
-    /**
-     * If only spec reporter is selected, we don't need any config
-     */
-    const shouldAddConfig = !hasSpecReporter || reporters.length > 1
-    if (!shouldAddConfig) {
-      return { shouldAddReportersConfig: false }
-    }
-
-    const namedImports = reporters.map((reporter) => reporter.namedImport)
-
-    /**
-     * Build the import statement
-     */
-    const reportersListImport = namedImports.join(', ')
-    const importStatement = `import { ${reportersListImport} } from '@japa/runner/reporters'`
-    this.#configFile.imports.push(importStatement)
-
-    /**
-     * Setup ege bindings
-     */
-    const activated = hasSpecReporter ? 'spec' : 'dot'
-    const list = namedImports.map((reporter) => reporter + '()').join(', ')
-
-    return {
-      shouldAddReportersConfig: true,
-      reporters: { activated, list },
-    }
-  }
-
-  /**
    * Setup bindings for assertion library
    */
   #prepareAssertionLibraryConfig(lib: PluginChoice) {
@@ -266,7 +216,7 @@ export class InstallJapa extends BaseCommand {
    * Also creates the directories if missing
    */
   async #writeFile(filePath: string, contents: string, overwrite = false) {
-    const absoluteFilePath = join(this.projectRoot, filePath)
+    const absoluteFilePath = join(this.destination, filePath)
     const dir = dirname(absoluteFilePath)
 
     if (!overwrite && existsSync(absoluteFilePath)) {
@@ -287,7 +237,7 @@ export class InstallJapa extends BaseCommand {
       return
     }
 
-    await installPackage(packages, { cwd: this.projectRoot, dev: true })
+    await installPackage(packages, { cwd: this.destination, dev: true })
   }
 
   /**
@@ -311,7 +261,7 @@ export class InstallJapa extends BaseCommand {
    * Create or update the package.json file based upon the user selections
    */
   async #createOrUpdatePkgJson() {
-    const pkgJsonPath = join(this.projectRoot, 'package.json')
+    const pkgJsonPath = join(this.destination, 'package.json')
     const dir = dirname(pkgJsonPath)
 
     const testScript =
@@ -352,7 +302,7 @@ export class InstallJapa extends BaseCommand {
    * Print final instructions to the user
    */
   #printSuccessSticker() {
-    const projectRootRelativeToCwd = relative(process.cwd(), this.projectRoot)
+    const projectRootRelativeToCwd = relative(process.cwd(), this.destination)
 
     const sticker = this.ui.sticker().heading('Japa setup complete 🧪')
     if (projectRootRelativeToCwd) {
@@ -369,7 +319,6 @@ export class InstallJapa extends BaseCommand {
     /**
      * Prompt user for selections
      */
-    const reporters = await this.#promptReporters()
     await this.#promptAssertionLibrary()
     await this.#promptAdditionalPlugins()
     await this.#promptProjectType()
@@ -378,13 +327,11 @@ export class InstallJapa extends BaseCommand {
     /**
      * Create the japa configuration file
      */
-    const reportersBindings = this.#prepareReportersConfig(reporters)
     const result = await this.#edge.render('test-file', {
       imports: this.#configFile.imports,
       pluginsList: this.#configFile.plugins,
       fileExtension: this.#getExtension(),
       hasBrowserClientPlugin: this.#hasBrowserPlugin,
-      ...reportersBindings,
     })
     await this.#writeFile(`bin/test.${this.#getExtension()}`, result)
 

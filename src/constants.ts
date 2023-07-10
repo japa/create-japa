@@ -11,18 +11,6 @@ import { PluginChoice } from './types.js'
 
 export const PLUGINS = [
   {
-    name: 'spec-reporter',
-    message: 'Spec Reporter',
-    namedImport: 'spec',
-    importPath: '@japa/runner/reporters',
-  },
-  {
-    name: 'dot-reporter',
-    message: 'Dot Reporter',
-    namedImport: 'dot',
-    importPath: '@japa/runner/reporters',
-  },
-  {
     name: '@japa/assert',
     hint: '(Chai.js assert)',
     namedImport: 'assert',
