@@ -324,7 +324,7 @@ export class InstallJapa extends BaseCommand {
 
     const sticker = this.ui.sticker().heading('Japa setup complete 🧪')
     if (projectRootRelativeToCwd) {
-      sticker.add(this.colors.dim(`> cd ${projectRootRelativeToCwd}`))
+      sticker.add(`> cd ${projectRootRelativeToCwd}`)
     }
     sticker.add(`> ${this.packageManager} run test`)
     sticker.render()
