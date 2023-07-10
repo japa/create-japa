@@ -25,7 +25,7 @@ import { existsSync } from 'node:fs'
 import { installPackage } from '@antfu/install-pkg'
 
 export class InstallJapa extends BaseCommand {
-  static commandName = 'install-japa'
+  static commandName = 'create-japa'
   static description = 'Install Japa testing framework'
 
   @args.string({ description: 'Path to the project root', default: cwd() })
