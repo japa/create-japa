@@ -326,7 +326,7 @@ export class InstallJapa extends BaseCommand {
     if (projectRootRelativeToCwd) {
       sticker.add(this.colors.dim(`> cd ${projectRootRelativeToCwd}`))
     }
-    sticker.add(this.colors.dim('> npm run test'))
+    sticker.add(`> ${this.packageManager} run test`)
     sticker.render()
   }
 
