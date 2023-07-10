@@ -13,10 +13,34 @@ The process involves installing the required packages and creating the necessary
 Navigate to the root of your project and run the following command.
 
 ```sh
+# npm
 npm init japa
 
 # yarn
 yarn create japa
+
+# pnpm
+pnpm create japa
+```
+
+## Options
+
+### `destination`
+
+You can pass the destination directory as the first argument to the command. For example:
+
+```sh
+npm init japa my-app
+```
+
+This will initialize Japa inside the `my-app` directory.
+
+### `--package-manager`
+
+We are trying to detect the package manager used by your project. However, you can always override it by passing the `--package-manager` flag.
+
+```sh
+npm init japa -- --package-manager=pnpm
 ```
 
 Follow the prompts and you will be all set!
