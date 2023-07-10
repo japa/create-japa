@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import { BaseCommand, args } from '@adonisjs/ace'
+import { BaseCommand, args, flags } from '@adonisjs/ace'
 import gradient from 'gradient-string'
 import { ADDITIONAL_PLUGINS, ASSERTION_CHOICES, PROJECT_TYPES } from './constants.js'
 import { dirname, join, relative } from 'node:path'
@@ -18,13 +18,23 @@ import { cwd } from 'node:process'
 import { PluginChoice } from './types.js'
 import { existsSync } from 'node:fs'
 import { installPackage } from '@antfu/install-pkg'
+import detectPackageManager from 'which-pm-runs'
 
 export class InstallJapa extends BaseCommand {
   static commandName = 'create-japa'
   static description = 'Install Japa testing framework'
 
+  /**
+   * Destination directory
+   */
   @args.string({ description: 'Destination', default: cwd() })
   declare destination: string
+
+  /**
+   * Package manager to use
+   */
+  @flags.string({ description: 'Force a package manager to be used', name: 'package-manager' })
+  declare packageManager: string
 
   static #isPackageInstallFaked = false
 
@@ -77,12 +87,16 @@ export class InstallJapa extends BaseCommand {
     this.#isPackageInstallFaked = false
   }
 
+  /**
+   * Setup edge and detect package manager
+   */
   #setup() {
-    const templatesDir = join(dirname(fileURLToPath(import.meta.url)), '../templates')
+    if (!this.packageManager) {
+      this.packageManager = detectPackageManager()?.name || 'npm'
+    }
 
-    this.#edge = new Edge({
-      cache: false,
-    }).mount(templatesDir)
+    const templatesDir = join(dirname(fileURLToPath(import.meta.url)), '../templates')
+    this.#edge = new Edge({ cache: false }).mount(templatesDir)
   }
 
   /**
@@ -237,7 +251,11 @@ export class InstallJapa extends BaseCommand {
       return
     }
 
-    await installPackage(packages, { cwd: this.destination, dev: true })
+    await installPackage(packages, {
+      cwd: this.destination,
+      dev: true,
+      packageManager: this.packageManager,
+    })
   }
 
   /**

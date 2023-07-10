@@ -271,4 +271,26 @@ test.group('install', (group) => {
     assert.deepEqual(pkg.name, 'foo')
     assert.deepEqual(pkg.description, 'blabla')
   })
+
+  test('install dependencies using detected package manager - {agent}')
+    .with([
+      { agent: 'npm/7.0.0 node/v15.0.0 darwin x64', lockFile: 'package-lock.json' },
+      { agent: 'pnpm/5.0.0 node/v15.0.0 darwin x64', lockFile: 'pnpm-lock.yaml' },
+      { agent: 'yarn/1.22.5 npm/? node/v15.0.0 darwin x64', lockFile: 'yarn.lock' },
+    ])
+    .run(async ({ assert, fs }, { agent, lockFile }) => {
+      process.env.npm_config_user_agent = agent
+
+      InstallJapa.restorePackageInstall()
+
+      const command = await kernel.create(InstallJapa, [fs.basePath])
+
+      trapPrompts(command)
+
+      await command.exec()
+      await assert.fileExists(`${lockFile}`)
+
+      process.env.npm_config_user_agent = undefined
+    })
+    .disableTimeout()
 })
