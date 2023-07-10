@@ -2,11 +2,11 @@
   "name": "create-japa",
   "description": "Setup japa inside an existing Node.js project",
   "version": "2.0.0-0",
-  "main": "build/index.js",
-  "type": "module",
   "engines": {
     "node": ">=18.16.0"
   },
+  "main": "build/index.js",
+  "type": "module",
   "files": [
     "build/bin",
     "build/templates",
