@@ -7,18 +7,19 @@
  * file that was distributed with this source code.
  */
 
-import { BaseCommand, args, flags } from '@adonisjs/ace'
-import gradient from 'gradient-string'
-import { ADDITIONAL_PLUGINS, ASSERTION_CHOICES, PROJECT_TYPES } from './constants.js'
-import { dirname, join, relative } from 'node:path'
-import { fileURLToPath } from 'node:url'
 import { Edge } from 'edge.js'
-import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { cwd } from 'node:process'
-import { PluginChoice } from './types.js'
 import { existsSync } from 'node:fs'
-import { installPackage } from '@antfu/install-pkg'
+import gradient from 'gradient-string'
+import { fileURLToPath } from 'node:url'
 import detectPackageManager from 'which-pm-runs'
+import { installPackage } from '@antfu/install-pkg'
+import { dirname, join, relative } from 'node:path'
+import { BaseCommand, args, flags } from '@adonisjs/ace'
+import { mkdir, readFile, writeFile } from 'node:fs/promises'
+
+import { ADDITIONAL_PLUGINS, ASSERTION_CHOICES, PROJECT_TYPES } from './constants.js'
+import type { PluginChoice } from './types.js'
 
 export class InstallJapa extends BaseCommand {
   static commandName = 'create-japa'
