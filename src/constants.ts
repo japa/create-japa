@@ -63,11 +63,6 @@ export const PLUGINS = [
   },
 ] as PluginChoice[]
 
-export const REPORTER_CHOICES = [
-  PLUGINS.find((plugin) => plugin.name === 'spec-reporter')!,
-  PLUGINS.find((plugin) => plugin.name === 'dot-reporter')!,
-]
-
 export const ASSERTION_CHOICES = [
   PLUGINS.find((plugin) => plugin.name === '@japa/assert')!,
   PLUGINS.find((plugin) => plugin.name === '@japa/expect')!,
