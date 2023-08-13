@@ -220,6 +220,10 @@ export async function setup() {
   let assertionPluginCall: undefined | string
   const { importerFunctionCall } = PROJECT_TYPES.find(({ name }) => name === projectType) || {}
 
+  if (isTypeScriptProject) {
+    packagesToInstall.push('ts-node')
+  }
+
   /**
    * Collect import calls for reporters
    */
@@ -356,11 +360,14 @@ export async function setup() {
   }
 
   if (!response || response.status === 0) {
+    let loaderOption = ''
+    if (projectType === 'TypeScript') loaderOption = '-r ts-node/register '
+    if (projectType === 'TypeScript ESM') loaderOption = '--loader=ts-node/esm '
     console.log(logger.colors.green(`${icons.tick} Configured japa successfully`))
     console.log(
       `${icons.pointer} Run ${logger.colors
         .dim()
-        .underline(`"node ${testFileName}"`)} to execute tests`
+        .underline(`"node ${loaderOption}${testFileName}"`)} to execute tests`
     )
   } else {
     console.log(logger.colors.red(`${icons.cross} Packages installation failed`))
