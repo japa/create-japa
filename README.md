@@ -45,8 +45,8 @@ npm init japa -- --package-manager=pnpm
 
 Follow the prompts and you will be all set!
 
-[github-actions-image]: https://img.shields.io/github/actions/workflow/status/japa/create-japa/test.yml?style=for-the-badge
-[github-actions-url]: https://github.com/japa/create-japa/actions/workflows/test.yml "github-actions"
+[github-actions-image]: https://img.shields.io/github/actions/workflow/status/japa/create-japa/checks.yml?style=for-the-badge
+[github-actions-url]: https://github.com/japa/create-japa/actions/workflows/checks.yml "github-actions"
 
 [npm-image]: https://img.shields.io/npm/v/create-japa.svg?style=for-the-badge&logo=npm
 [npm-url]: https://npmjs.org/package/create-japa "npm"
