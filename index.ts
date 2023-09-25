@@ -7,12 +7,12 @@
  * file that was distributed with this source code.
  */
 
-import { HelpCommand, Kernel } from '@adonisjs/ace'
+import { BaseCommand, HelpCommand, Kernel } from '@adonisjs/ace'
 import { InstallJapa } from './src/install_japa.js'
 
 Kernel.defaultCommand = InstallJapa
 
-export const kernel = Kernel.create()
+export const kernel: Kernel<typeof BaseCommand> = Kernel.create()
 
 kernel.defineFlag('help', {
   type: 'boolean',
