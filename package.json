@@ -1,7 +1,7 @@
 {
   "name": "create-japa",
   "description": "Setup japa inside an existing Node.js project",
-  "version": "2.0.0-2",
+  "version": "2.0.0-3",
   "engines": {
     "node": ">=18.16.0"
   },
