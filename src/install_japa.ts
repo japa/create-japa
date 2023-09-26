@@ -14,7 +14,7 @@ import gradient from 'gradient-string'
 import { fileURLToPath } from 'node:url'
 import detectPackageManager from 'which-pm-runs'
 import { installPackage } from '@antfu/install-pkg'
-import { dirname, join, relative } from 'node:path'
+import { basename, dirname, join, relative } from 'node:path'
 import { BaseCommand, args, flags } from '@adonisjs/ace'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 
@@ -280,7 +280,6 @@ export class InstallJapa extends BaseCommand {
    */
   async #createOrUpdatePkgJson() {
     const pkgJsonPath = join(this.destination, 'package.json')
-    const dir = dirname(pkgJsonPath)
 
     const testScript =
       this.#projectType === 'TypeScript'
@@ -291,7 +290,7 @@ export class InstallJapa extends BaseCommand {
      * Create a new package.json file when missing
      */
     if (!existsSync(pkgJsonPath)) {
-      await this.#createNewPkgJson(dir, testScript)
+      await this.#createNewPkgJson(basename(this.destination), testScript)
       await this.#installPackages([
         ...this.#packageToInstall.map((pkg) => `${pkg}@next`),
         'ts-node',
