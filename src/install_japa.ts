@@ -273,7 +273,6 @@ export class InstallJapa extends BaseCommand {
     }
 
     await this.#writeFile('package.json', JSON.stringify(content, null, 2))
-    this.logger.action('create package.json').succeeded()
   }
 
   /**
