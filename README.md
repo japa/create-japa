@@ -3,7 +3,7 @@
 
 [![github-actions-image]][github-actions-url] [![npm-image]][npm-url] [![license-image]][license-url] [![typescript-image]][typescript-url]
 
-![](./banner.png)
+![](./japa_art.png)
 
 The `create-japa` is a small CLI utility to configure Japa inside an existing Node.js project.
 
