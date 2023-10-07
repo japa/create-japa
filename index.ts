@@ -212,7 +212,7 @@ export async function setup() {
   const tsContextProperties: string[] = []
   const tsTestProperties: string[] = []
   const tsImports: string[] = [`import '@japa/runner'`]
-  const packagesToInstall: string[] = ['@japa/runner@1.2.0']
+  const packagesToInstall: string[] = ['@japa/runner@2.5.1']
 
   const testFileName = `bin/test.${fileExtension}`
   const typesFileName = 'bin/japa_types.ts'
