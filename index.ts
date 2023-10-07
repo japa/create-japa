@@ -26,6 +26,7 @@ const TITLE = Buffer.from(
 const REPORTER_CHOICES = [
   {
     name: '@japa/spec-reporter' as const,
+    version: '1.3.3',
     hint: '(Spec reporter)',
     importCall() {
       return `import { specReporter } from '${this.name}'`
@@ -41,6 +42,7 @@ const ASSERTION_CHOICES = [
   {
     name: '@japa/assert' as const,
     hint: '(Chai.js assert)',
+    version: '1.4.1',
     importCall() {
       return `import { assert } from '${this.name}'`
     },
@@ -60,6 +62,7 @@ const ASSERTION_CHOICES = [
   {
     name: '@japa/expect' as const,
     hint: '(Jest expect)',
+    version: '2.0.2',
     types: {
       importCall() {
         return ''
@@ -86,6 +89,7 @@ const ADDITIONAL_PLUGINS = [
   {
     name: '@japa/run-failed-tests' as const,
     hint: '(A plugin to run only failed tests)',
+    version: '1.1.1',
     importCall() {
       return `import { runFailedTests } from '${this.name}'`
     },
@@ -97,6 +101,7 @@ const ADDITIONAL_PLUGINS = [
   {
     name: '@japa/api-client' as const,
     hint: '(A plugin to test API endpoints over HTTP)',
+    version: '1.4.4',
     importCall() {
       return `import { apiClient } from '${this.name}'`
     },
@@ -207,7 +212,7 @@ export async function setup() {
   const tsContextProperties: string[] = []
   const tsTestProperties: string[] = []
   const tsImports: string[] = [`import '@japa/runner'`]
-  const packagesToInstall: string[] = ['@japa/runner']
+  const packagesToInstall: string[] = ['@japa/runner@1.2.0']
 
   const testFileName = `bin/test.${fileExtension}`
   const typesFileName = 'bin/japa_types.ts'
@@ -225,7 +230,7 @@ export async function setup() {
    */
   reporters.forEach((reporter) => {
     const reporterMatch = REPORTER_CHOICES.find(({ name }) => name === reporter)!
-    packagesToInstall.push(reporter)
+    packagesToInstall.push(`${reporterMatch.name}@${reporterMatch.version}`)
     imports.push(
       projectType === 'JavaScript' ? reporterMatch.requireCall() : reporterMatch.importCall()
     )
@@ -237,7 +242,7 @@ export async function setup() {
    */
   if (assertionLibrary !== 'None') {
     const assertionMatch = ASSERTION_CHOICES.find(({ name }) => name === assertionLibrary)!
-    packagesToInstall.push(assertionLibrary)
+    packagesToInstall.push(`${assertionMatch.name}@${assertionMatch.version}`)
     imports.push(
       projectType === 'JavaScript' ? assertionMatch.requireCall!() : assertionMatch.importCall!()
     )
@@ -264,7 +269,7 @@ export async function setup() {
    */
   plugins.forEach((plugin) => {
     const promptMatch = ADDITIONAL_PLUGINS.find(({ name }) => name === plugin)!
-    packagesToInstall.push(plugin)
+    packagesToInstall.push(`${promptMatch.name}@${promptMatch.version}`)
     imports.push(
       projectType === 'JavaScript' ? promptMatch.requireCall() : promptMatch.importCall()
     )
