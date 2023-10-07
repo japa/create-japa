@@ -26,14 +26,14 @@
     "clean": "del-cli build",
     "compile": "npm run lint && npm run clean && tsc && copyfiles templates/* build",
     "build": "npm run compile",
-    "release": "np --message=\"chore(release): %s\"",
+    "release": "np",
     "version": "npm run build",
     "prepublishOnly": "npm run build",
     "lint": "eslint . --ext=.ts",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
     "quick:test": "node --enable-source-maps --loader ts-node/esm bin/test.ts",
-    "sync-labels": "github-label-sync --labels .github/labels.json japa/file-system"
+    "sync-labels": "github-label-sync --labels .github/labels.json japa/create-japa"
   },
   "devDependencies": {
     "@adonisjs/eslint-config": "^1.1.8",
