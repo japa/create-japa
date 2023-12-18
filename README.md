@@ -5,7 +5,7 @@
 
 ![](./japa_art.png)
 
-The `create-japa` is a small CLI utility to configure Japa inside an existing Node.js project.
+The `create-japa` is a CLI utility configuring Japa inside a new or existing Node.js project.
 
 The process involves installing the required packages and creating the necessary files. The setup works with Typescript and JavaScript projects.
 
@@ -25,25 +25,47 @@ pnpm create japa
 
 ## Options
 
-### `destination`
+### `destination (optional)`
 
-You can pass the destination directory as the first argument to the command. For example:
+You can pass the destination directory as the first argument to the command. The `process.cwd()` will be used when the option is not defined.
 
 ```sh
 npm init japa my-app
 ```
 
-This will initialize Japa inside the `my-app` directory.
-
 ### `--package-manager`
 
-We are trying to detect the package manager used by your project. However, you can always override it by passing the `--package-manager` flag.
+Define the package manager to use to install dependencies. If not defined, we will attempt to detect the package manager using [@antfu/install-pkg
+](https://github.com/antfu/install-pkg) package.
 
 ```sh
 npm init japa -- --package-manager=pnpm
 ```
 
-Follow the prompts and you will be all set!
+### `--plugins`
+Define an array of plugins to install. We will display a series of prompts if this flag is not set.
+
+```sh
+npm init japa -- --plugins="@japa/api-client" --plugins="@japa/snapshot"
+```
+
+### `--project-type`
+Define the project type for which you want to configure Japa. The value could be either `typescript` or `javascript`. If this flag is not set, we will display a prompt for the project type selection.
+
+```sh
+npm init japa -- --project-type=typescript
+```
+
+### `--sample-test-file`
+Enable the flag to create a sample test file or disable it not to create it.
+
+```sh
+# Enable it
+npm init japa -- --sample-test-file
+
+# Disable it
+npm init japa -- --no-sample-test-file
+```
 
 [github-actions-image]: https://img.shields.io/github/actions/workflow/status/japa/create-japa/checks.yml?style=for-the-badge
 [github-actions-url]: https://github.com/japa/create-japa/actions/workflows/checks.yml "github-actions"
