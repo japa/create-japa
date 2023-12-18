@@ -1,5 +1,6 @@
 import { test } from '@japa/runner'
 
+@if(assertPlugin)~
 test.group('Maths.add', () => {
   test('add two numbers', ({ {{ assertPlugin }} }) => {
     // Test logic goes here
@@ -10,3 +11,8 @@ test.group('Maths.add', () => {
     @endif
   })
 })
+@else~
+test.group('Maths.add', () => {
+  test('add two numbers', () => {})
+})
+@end

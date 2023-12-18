@@ -76,4 +76,7 @@ export const ADDITIONAL_PLUGINS = [
   PLUGINS.find((plugin) => plugin.name === '@japa/browser-client')!,
 ]
 
-export const PROJECT_TYPES = [{ name: 'TypeScript' as const }, { name: 'JavaScript' as const }]
+export const PROJECT_TYPES = [
+  { name: 'typescript' as const, message: 'TypeScript' },
+  { name: 'javascript' as const, message: 'JavaScript' },
+]

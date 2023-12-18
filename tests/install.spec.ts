@@ -14,7 +14,7 @@ import { InstallJapa } from '../src/install_japa.js'
 function trapPrompts(command: InstallJapa) {
   command.prompt.trap('Select the assertion library').replyWith('@japa/assert')
   command.prompt.trap('Select additional plugins').replyWith([])
-  command.prompt.trap('Select the project type').replyWith('TypeScript')
+  command.prompt.trap('Select the project type').replyWith('typescript')
   command.prompt.trap('Want us to create a sample test?').replyWith(true)
 }
 
@@ -33,7 +33,7 @@ test.group('install', (group) => {
 
     command.prompt.trap('Select the assertion library').replyWith('@japa/assert')
     command.prompt.trap('Select additional plugins').replyWith([])
-    command.prompt.trap('Select the project type').replyWith('TypeScript')
+    command.prompt.trap('Select the project type').replyWith('typescript')
     command.prompt.trap('Want us to create a sample test?').replyWith(false)
 
     await command.exec()
@@ -49,7 +49,7 @@ test.group('install', (group) => {
 
     command.prompt.trap('Select the assertion library').replyWith('@japa/expect')
     command.prompt.trap('Select additional plugins').replyWith([])
-    command.prompt.trap('Select the project type').replyWith('TypeScript')
+    command.prompt.trap('Select the project type').replyWith('typescript')
     command.prompt.trap('Want us to create a sample test?').replyWith(false)
 
     await command.exec()
@@ -64,7 +64,7 @@ test.group('install', (group) => {
 
     command.prompt.trap('Select the assertion library').replyWith('@japa/assert')
     command.prompt.trap('Select additional plugins').replyWith('@japa/file-system')
-    command.prompt.trap('Select the project type').replyWith('TypeScript')
+    command.prompt.trap('Select the project type').replyWith('typescript')
     command.prompt.trap('Want us to create a sample test?').replyWith(false)
 
     await command.exec()
@@ -82,7 +82,7 @@ test.group('install', (group) => {
     command.prompt
       .trap('Select additional plugins')
       .replyWith(['@japa/api-client', '@japa/browser-client'])
-    command.prompt.trap('Select the project type').replyWith('TypeScript')
+    command.prompt.trap('Select the project type').replyWith('typescript')
     command.prompt.trap('Want us to create a sample test?').replyWith(false)
 
     await command.exec()
@@ -103,7 +103,7 @@ test.group('install', (group) => {
     command.prompt
       .trap('Select additional plugins')
       .replyWith(['@japa/api-client', '@japa/browser-client', '@japa/file-system'])
-    command.prompt.trap('Select the project type').replyWith('TypeScript')
+    command.prompt.trap('Select the project type').replyWith('typescript')
     command.prompt.trap('Want us to create a sample test?').replyWith(false)
 
     await command.exec()
@@ -114,12 +114,12 @@ test.group('install', (group) => {
     assert.include(content, `   browserClient({ runInSuites: ['browser'] }),`)
   })
 
-  test('output config file as js if javascript project', async ({ assert, fs }) => {
+  test('configure inside javascript project', async ({ assert, fs }) => {
     const command = await kernel.create(InstallJapa, [fs.basePath])
 
     command.prompt.trap('Select the assertion library').replyWith('@japa/assert')
     command.prompt.trap('Select additional plugins').replyWith([])
-    command.prompt.trap('Select the project type').replyWith('JavaScript')
+    command.prompt.trap('Select the project type').replyWith('javascript')
     command.prompt.trap('Want us to create a sample test?').replyWith(false)
 
     await command.exec()
@@ -132,7 +132,7 @@ test.group('install', (group) => {
 
     command.prompt.trap('Select the assertion library').replyWith('@japa/assert')
     command.prompt.trap('Select additional plugins').replyWith([])
-    command.prompt.trap('Select the project type').replyWith('JavaScript')
+    command.prompt.trap('Select the project type').replyWith('javascript')
     command.prompt.trap('Want us to create a sample test?').replyWith(false)
 
     await command.exec()
@@ -146,7 +146,7 @@ test.group('install', (group) => {
 
     command.prompt.trap('Select the assertion library').replyWith('@japa/assert')
     command.prompt.trap('Select additional plugins').replyWith([])
-    command.prompt.trap('Select the project type').replyWith('TypeScript')
+    command.prompt.trap('Select the project type').replyWith('typescript')
     command.prompt.trap('Want us to create a sample test?').replyWith(false)
 
     await command.exec()
@@ -160,7 +160,7 @@ test.group('install', (group) => {
 
     command.prompt.trap('Select the assertion library').replyWith('@japa/assert')
     command.prompt.trap('Select additional plugins').replyWith(['@japa/browser-client'])
-    command.prompt.trap('Select the project type').replyWith('TypeScript')
+    command.prompt.trap('Select the project type').replyWith('typescript')
     command.prompt.trap('Want us to create a sample test?').replyWith(false)
 
     await command.exec()
@@ -175,7 +175,7 @@ test.group('install', (group) => {
 
     command.prompt.trap('Select the assertion library').replyWith('@japa/assert')
     command.prompt.trap('Select additional plugins').replyWith([])
-    command.prompt.trap('Select the project type').replyWith('TypeScript')
+    command.prompt.trap('Select the project type').replyWith('typescript')
     command.prompt.trap('Want us to create a sample test?').replyWith(true)
 
     await command.exec()
@@ -191,7 +191,7 @@ test.group('install', (group) => {
 
     command.prompt.trap('Select the assertion library').replyWith('@japa/expect')
     command.prompt.trap('Select additional plugins').replyWith([])
-    command.prompt.trap('Select the project type').replyWith('TypeScript')
+    command.prompt.trap('Select the project type').replyWith('typescript')
     command.prompt.trap('Want us to create a sample test?').replyWith(true)
 
     await command.exec()
@@ -210,7 +210,7 @@ test.group('install', (group) => {
 
     command.prompt.trap('Select the assertion library').replyWith('@japa/assert')
     command.prompt.trap('Select additional plugins').replyWith(['@japa/browser-client'])
-    command.prompt.trap('Select the project type').replyWith('TypeScript')
+    command.prompt.trap('Select the project type').replyWith('typescript')
     command.prompt.trap('Want us to create a sample test?').replyWith(true)
 
     await command.exec()

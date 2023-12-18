@@ -62,7 +62,7 @@
   "dependencies": {
     "@adonisjs/ace": "^12.3.1-13",
     "@antfu/install-pkg": "^0.3.1",
-    "edge.js": "^6.0.0-10",
+    "edge.js": "^6.0.0",
     "gradient-string": "^2.0.2",
     "which-pm-runs": "^1.1.0"
   },

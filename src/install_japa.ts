@@ -14,32 +14,77 @@ import gradient from 'gradient-string'
 import { fileURLToPath } from 'node:url'
 import detectPackageManager from 'which-pm-runs'
 import { installPackage } from '@antfu/install-pkg'
-import { basename, dirname, join, relative } from 'node:path'
 import { BaseCommand, args, flags } from '@adonisjs/ace'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { basename, dirname, join, relative } from 'node:path'
 
-import { ADDITIONAL_PLUGINS, ASSERTION_CHOICES, PROJECT_TYPES } from './constants.js'
 import type { PluginChoice } from './types.js'
+import { ADDITIONAL_PLUGINS, ASSERTION_CHOICES, PROJECT_TYPES } from './constants.js'
+
+const TEMPLATES_DIR = join(dirname(fileURLToPath(import.meta.url)), '../templates')
 
 export class InstallJapa extends BaseCommand {
+  static #isPackageInstallFaked = false
   static commandName = 'create-japa'
-  static description = 'Install Japa testing framework'
+  static description = 'Configure Japa inside a fresh or an existing Node.js project'
+
+  /**
+   * Fake package install for testing
+   */
+  static fakePackageInstall() {
+    this.#isPackageInstallFaked = true
+  }
+
+  /**
+   * Restore package install
+   */
+  static restorePackageInstall() {
+    this.#isPackageInstallFaked = false
+  }
 
   /**
    * Destination directory
    */
-  @args.string({ description: 'Destination', default: cwd() })
+  @args.string({ description: 'Destination', default: 'process.cwd()' })
   declare destination: string
 
   /**
    * Package manager to use
    */
-  @flags.string({ description: 'Force a package manager to be used', name: 'package-manager' })
+  @flags.string({
+    name: 'package-manager',
+    description: 'Define the package manager to use for installing dependencies',
+  })
   declare packageManager: string
 
-  static #isPackageInstallFaked = false
+  /**
+   * An array of plugins to configure
+   */
+  @flags.array({
+    description: 'Define a collection of plugins to install and configure',
+  })
+  declare plugins: string[]
 
-  #edge!: Edge
+  /**
+   * Project type
+   */
+  @flags.string({
+    description: 'Define the project type for which you want to configure Japa',
+  })
+  declare projectType: 'typescript' | 'javascript'
+
+  /**
+   * Whether or not to create the sample test file
+   */
+  @flags.boolean({
+    description: 'Enable to create a sample test file',
+  })
+  declare sampleTestFile: boolean
+
+  /**
+   * Edge is used for evaluating templates
+   */
+  #edge = new Edge({ cache: false }).mount(TEMPLATES_DIR)
 
   /**
    * Config file bindings
@@ -60,45 +105,9 @@ export class InstallJapa extends BaseCommand {
   #hasBrowserPlugin = false
 
   /**
-   * The project type. TypeScript or JavaScript
-   */
-  #projectType!: 'TypeScript' | 'JavaScript'
-
-  /**
-   * Selected assertion library
-   */
-  #assertionLibrary!: PluginChoice
-
-  /**
    * Packages that should be installed
    */
   #packageToInstall: string[] = ['@japa/runner']
-
-  /**
-   * Fake package install for testing
-   */
-  static fakePackageInstall() {
-    this.#isPackageInstallFaked = true
-  }
-
-  /**
-   * Restore package install
-   */
-  static restorePackageInstall() {
-    this.#isPackageInstallFaked = false
-  }
-
-  /**
-   * Setup edge and detect package manager
-   */
-  #setup() {
-    if (!this.packageManager) {
-      this.packageManager = detectPackageManager()?.name || 'npm'
-    }
-
-    const templatesDir = join(dirname(fileURLToPath(import.meta.url)), '../templates')
-    this.#edge = new Edge({ cache: false }).mount(templatesDir)
-  }
 
   /**
    * Print Title in Ascii art
@@ -115,33 +124,18 @@ export class InstallJapa extends BaseCommand {
   }
 
   /**
-   * Given selections and list of choices, this method
-   * returns the original choices object for the selections
-   */
-  #findSelectionByName<Choices extends Record<string, any>[], Selections extends string | string[]>(
-    choices: Choices,
-    selections: Selections
-  ): Selections extends string ? Choices[number] : Choices[number][] {
-    if (Array.isArray(selections)) {
-      return selections.map((selection) => choices.find((r) => r.name === selection)!) as any
-    }
-
-    return choices.find((r) => r.name === selections) as any
-  }
-
-  /**
    * Prompt to select an assertion library. Assertion library
    * is optional
    */
   async #promptAssertionLibrary() {
-    this.#assertionLibrary = await this.prompt.choice(
+    const assertionPlugin = await this.prompt.choice(
       'Select the assertion library',
       ASSERTION_CHOICES,
-      { result: (selection) => this.#findSelectionByName(ASSERTION_CHOICES, selection) }
+      {
+        validate: (value) => !!value,
+      }
     )
-
-    this.#prepareAssertionLibraryConfig(this.#assertionLibrary)
-    this.#packageToInstall.push(...(this.#assertionLibrary.packagesToInstall || []))
+    this.plugins.push(assertionPlugin)
   }
 
   /**
@@ -149,37 +143,9 @@ export class InstallJapa extends BaseCommand {
    */
   async #promptAdditionalPlugins() {
     const plugins = await this.prompt.multiple('Select additional plugins', ADDITIONAL_PLUGINS, {
-      result: (selections) => this.#findSelectionByName(ADDITIONAL_PLUGINS, selections),
       default: [],
     })
-
-    this.#preparePluginsConfig(plugins)
-    this.#hasBrowserPlugin = this.#hasPickedPlugin(plugins, '@japa/browser-client')
-    this.#packageToInstall.push(...plugins.map((plugin) => plugin.packagesToInstall || []).flat())
-
-    return plugins
-  }
-
-  /**
-   * Ask if the project a JS or TS project
-   */
-  async #promptProjectType() {
-    this.#projectType = await this.prompt.choice('Select the project type', PROJECT_TYPES)
-    return this.#projectType
-  }
-
-  /**
-   * Should we create a sample test file?
-   */
-  #promptSampleTestFile() {
-    return this.prompt.confirm('Want us to create a sample test?')
-  }
-
-  /**
-   * Check if given plugin has been selected by the user
-   */
-  #hasPickedPlugin(plugins: PluginChoice[], name: string) {
-    return !!plugins.find((plugin) => plugin.name === name)
+    this.plugins = this.plugins.concat(plugins)
   }
 
   /**
@@ -205,12 +171,39 @@ export class InstallJapa extends BaseCommand {
   }
 
   /**
+   * Processing selected plugins
+   */
+  #processSelectedPlugins() {
+    /**
+     * Configuring assertion library
+     */
+    const assertionPlugin = ASSERTION_CHOICES.find((choice) => this.plugins.includes(choice.name))
+    if (assertionPlugin) {
+      this.#prepareAssertionLibraryConfig(assertionPlugin)
+      this.#packageToInstall.push(...(assertionPlugin.packagesToInstall || []))
+    }
+
+    /**
+     * Configuring rest of the plugins
+     */
+    const additionalPlugins = ADDITIONAL_PLUGINS.filter((choice) =>
+      this.plugins.includes(choice.name)
+    )
+    this.#preparePluginsConfig(additionalPlugins)
+    this.#hasBrowserPlugin = this.plugins.includes('@japa/browser-client')
+    this.#packageToInstall.push(
+      ...additionalPlugins.map((plugin) => plugin.packagesToInstall || []).flat()
+    )
+  }
+
+  /**
    * Create sample test files.
    * May also create a browser test file if browser plugin is selected
    */
   async #createSampleTestFiles() {
+    const assertionPlugin = ASSERTION_CHOICES.find((choice) => this.plugins.includes(choice.name))
     const content = await this.#edge.render('test-sample', {
-      assertPlugin: this.#assertionLibrary.namedImport,
+      assertPlugin: assertionPlugin?.namedImport,
     })
 
     const destination = this.#hasBrowserPlugin ? `tests/unit/maths.spec` : 'tests/maths.spec'
@@ -222,8 +215,12 @@ export class InstallJapa extends BaseCommand {
     }
   }
 
+  /**
+   * Returns the file extensions based upon the selected
+   * project type
+   */
   #getExtension() {
-    return this.#projectType === 'TypeScript' ? 'ts' : 'js'
+    return this.projectType === 'typescript' ? 'ts' : 'js'
   }
 
   /**
@@ -282,7 +279,7 @@ export class InstallJapa extends BaseCommand {
     const pkgJsonPath = join(this.destination, 'package.json')
 
     const testScript =
-      this.#projectType === 'TypeScript'
+      this.projectType === 'typescript'
         ? 'node --loader ts-node/esm --enable-source-maps bin/test.ts'
         : 'node bin/test.js'
 
@@ -329,17 +326,76 @@ export class InstallJapa extends BaseCommand {
     sticker.render()
   }
 
-  async run() {
-    this.#setup()
+  /**
+   * The prepare lifecycle hook to setup the initial state
+   */
+  async prepare() {
     this.#printTitle()
+    if (!this.packageManager) {
+      this.packageManager = detectPackageManager()?.name || 'npm'
+    }
+    if (!this.destination) {
+      this.destination = cwd()
+    }
+  }
+
+  /**
+   * The interact lifecycle hook to trigger prompts
+   */
+  async interact() {
+    if (!this.projectType) {
+      this.projectType = await this.prompt.choice('Select the project type', PROJECT_TYPES, {
+        validate: (value) => !!value,
+      })
+    }
+
+    if (!this.plugins) {
+      this.plugins = []
+      await this.#promptAssertionLibrary()
+      await this.#promptAdditionalPlugins()
+    }
+
+    if (this.sampleTestFile === undefined) {
+      this.sampleTestFile = await this.prompt.confirm('Want us to create a sample test?')
+    }
+  }
+
+  /**
+   * The run method is invoked by ace after the prepare
+   * and the interact methods
+   */
+  async run() {
+    await this.prepare()
+    await this.interact()
 
     /**
-     * Prompt user for selections
+     * If no plugins were selected
      */
-    await this.#promptAssertionLibrary()
-    await this.#promptAdditionalPlugins()
-    await this.#promptProjectType()
-    const createSampleTest = await this.#promptSampleTestFile()
+    if (!this.plugins) {
+      this.plugins = []
+    }
+
+    /**
+     * Ensure the project type was defined
+     */
+    if (!this.projectType) {
+      this.exitCode = 1
+      this.logger.error(
+        'Missing project type. Make sure to define it using the "--project-type" flag'
+      )
+      return
+    }
+
+    /**
+     * Invalid mentioned project type
+     */
+    if (!PROJECT_TYPES.find(({ name }) => this.projectType === name)) {
+      this.exitCode = 1
+      this.logger.error('Invalid project type. It must be either "javascript" or "typescript"')
+      return
+    }
+
+    this.#processSelectedPlugins()
 
     /**
      * Create the japa configuration file
@@ -355,7 +411,7 @@ export class InstallJapa extends BaseCommand {
     /**
      * Create the sample test files
      */
-    if (createSampleTest) {
+    if (this.sampleTestFile) {
       await this.#createSampleTestFiles()
     }
 
