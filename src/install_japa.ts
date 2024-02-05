@@ -289,7 +289,7 @@ export class InstallJapa extends BaseCommand {
     if (!existsSync(pkgJsonPath)) {
       await this.#createNewPkgJson(basename(this.destination), testScript)
       await this.#installPackages([
-        ...this.#packageToInstall.map((pkg) => `${pkg}@next`),
+        ...this.#packageToInstall.map((pkg) => `${pkg}@latest`),
         'ts-node',
         'typescript',
       ])
