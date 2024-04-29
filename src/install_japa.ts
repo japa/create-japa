@@ -8,7 +8,6 @@
  */
 
 import { Edge } from 'edge.js'
-import { cwd } from 'node:process'
 import { existsSync } from 'node:fs'
 import gradient from 'gradient-string'
 import { fileURLToPath } from 'node:url'
@@ -335,7 +334,7 @@ export class InstallJapa extends BaseCommand {
       this.packageManager = detectPackageManager()?.name || 'npm'
     }
     if (!this.destination) {
-      this.destination = cwd()
+      this.destination = process.cwd()
     }
   }
 
