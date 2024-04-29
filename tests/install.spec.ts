@@ -10,6 +10,7 @@
 import { test } from '@japa/runner'
 import { kernel } from '../index.js'
 import { InstallJapa } from '../src/install_japa.js'
+import { existsSync, mkdirSync } from 'node:fs'
 
 function trapPrompts(command: InstallJapa) {
   command.prompt.trap('Select the assertion library').replyWith('@japa/assert')
@@ -20,9 +21,11 @@ function trapPrompts(command: InstallJapa) {
 
 test.group('install', (group) => {
   group.each.setup(() => {
+    const projectRoot = process.cwd()
     kernel.ui.switchMode('raw')
     InstallJapa.fakePackageInstall()
     return () => {
+      process.chdir(projectRoot)
       kernel.ui.switchMode('normal')
       InstallJapa.restorePackageInstall()
     }
@@ -125,6 +128,22 @@ test.group('install', (group) => {
     await command.exec()
 
     await assert.fileExists('bin/test.js')
+  })
+
+  test('configure inside current directory if destination is not set', async ({ assert, fs }) => {
+    mkdirSync(fs.basePath, { recursive: true })
+    process.chdir(fs.basePath)
+
+    const command = await kernel.create(InstallJapa, [])
+
+    command.prompt.trap('Select the assertion library').replyWith('@japa/assert')
+    command.prompt.trap('Select additional plugins').replyWith([])
+    command.prompt.trap('Select the project type').replyWith('javascript')
+    command.prompt.trap('Want us to create a sample test?').replyWith(false)
+
+    await command.exec()
+
+    assert.isTrue(existsSync('bin/test.js'))
   })
 
   test('add default files config', async ({ assert, fs }) => {
