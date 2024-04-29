@@ -44,7 +44,7 @@ export class InstallJapa extends BaseCommand {
   /**
    * Destination directory
    */
-  @args.string({ description: 'Destination', default: process.cwd() })
+  @args.string({ description: 'Destination', required: false })
   declare destination: string
 
   /**
