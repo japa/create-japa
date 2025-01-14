@@ -5,7 +5,7 @@
 
 ![](./japa_art.png)
 
-The `create-japa` is a CLI utility configuring Japa inside a new or existing Node.js project.
+The `create-japa` is a CLI utility to configure Japa inside a new or existing Node.js project.
 
 The process involves installing the required packages and creating the necessary files. The setup works with Typescript and JavaScript projects.
 
@@ -13,13 +13,14 @@ The process involves installing the required packages and creating the necessary
 Navigate to the root of your project and run the following command.
 
 ```sh
-# npm
 npm init japa
+```
 
-# yarn
+```sh
 yarn create japa
+```
 
-# pnpm
+```sh
 pnpm create japa
 ```
 
