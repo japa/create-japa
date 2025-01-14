@@ -3,7 +3,7 @@
   "description": "Setup japa inside an existing Node.js project",
   "version": "2.1.3",
   "engines": {
-    "node": ">=18.16.0"
+     "node": ">=20.9.0"
   },
   "main": "build/index.js",
   "type": "module",

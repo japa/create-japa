@@ -279,7 +279,7 @@ export class InstallJapa extends BaseCommand {
 
     const testScript =
       this.projectType === 'typescript'
-        ? 'node --loader ts-node/esm --enable-source-maps bin/test.ts'
+        ? 'node --import ts-node-maintained/register/esm --enable-source-maps bin/test.ts'
         : 'node bin/test.js'
 
     /**
@@ -289,7 +289,8 @@ export class InstallJapa extends BaseCommand {
       await this.#createNewPkgJson(basename(this.destination), testScript)
       await this.#installPackages([
         ...this.#packageToInstall.map((pkg) => `${pkg}@latest`),
-        'ts-node',
+        'ts-node-maintained',
+        '@swc/core',
         'typescript',
       ])
 
@@ -309,6 +310,45 @@ export class InstallJapa extends BaseCommand {
     await writeFile(pkgJsonPath, JSON.stringify(pkgJson, null, 2))
     this.logger.action('update package.json').succeeded()
     await this.#installPackages(this.#packageToInstall.map((pkg) => pkg + '@latest'))
+  }
+
+  /**
+   * Create or update the package.json file based upon the user selections
+   */
+
+  async #createOrUpdateTSconfig() {
+    const tsConfigPath = join(this.destination, 'tsconfig.json')
+
+    /**
+     * Create a new tsconfig.json file when missing
+     */
+    if (!existsSync(tsConfigPath)) {
+      await this.#writeFile(
+        'tsconfig.json',
+        JSON.stringify(
+          {
+            compilerOptions: {
+              module: 'NodeNext',
+            },
+          },
+          null,
+          2
+        )
+      )
+      return
+    }
+
+    /**
+     * Update existing tsconfig.json file
+     */
+    const tsConfigJson = JSON.parse(await readFile(tsConfigPath, 'utf-8'))
+    tsConfigJson.compilerOptions = {
+      ...tsConfigJson.compilerOptions,
+      module: 'NodeNext',
+    }
+
+    await writeFile(tsConfigPath, JSON.stringify(tsConfigJson, null, 2))
+    this.logger.action('update tsconfig.json').succeeded()
   }
 
   /**
@@ -419,6 +459,14 @@ export class InstallJapa extends BaseCommand {
      * and install dependencies
      */
     await this.#createOrUpdatePkgJson()
+
+    /**
+     * Create or update the tsconfig.json file
+     * if ts preset is selected
+     */
+    if (this.projectType === 'typescript') {
+      await this.#createOrUpdateTSconfig()
+    }
 
     this.#printSuccessSticker()
   }

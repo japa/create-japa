@@ -265,7 +265,7 @@ test.group('install', (group) => {
 
     assert.deepEqual(pkg.type, 'module')
     assert.deepEqual(pkg.scripts, {
-      test: 'node --loader ts-node/esm --enable-source-maps bin/test.ts',
+      test: 'node --import ts-node-maintained/register/esm --enable-source-maps bin/test.ts',
     })
   })
 
@@ -285,7 +285,7 @@ test.group('install', (group) => {
 
     assert.deepEqual(pkg.type, 'module')
     assert.deepEqual(pkg.scripts, {
-      test: 'node --loader ts-node/esm --enable-source-maps bin/test.ts',
+      test: 'node --import ts-node-maintained/register/esm --enable-source-maps bin/test.ts',
     })
     assert.deepEqual(pkg.name, 'foo')
     assert.deepEqual(pkg.description, 'blabla')
@@ -312,4 +312,45 @@ test.group('install', (group) => {
       process.env.npm_config_user_agent = undefined
     })
     .disableTimeout()
+
+  test('should create tsconfig.json if ts is selected and no tsconfig exists', async ({
+    assert,
+    fs,
+  }) => {
+    const command = await kernel.create(InstallJapa, [fs.basePath])
+
+    trapPrompts(command)
+
+    await command.exec()
+
+    await assert.fileExists('tsconfig.json')
+    const config = await fs.contentsJson('tsconfig.json')
+
+    assert.deepEqual(config.compilerOptions.module, 'NodeNext')
+  })
+
+  test('should update existing tsconfig.json if exists with correct module setting', async ({
+    assert,
+    fs,
+  }) => {
+    await fs.create(
+      'tsconfig.json',
+      JSON.stringify({ compilerOptions: { target: 'ESNext', lib: ['ESNext'] } })
+    )
+
+    kernel.ui.switchMode('raw')
+
+    const command = await kernel.create(InstallJapa, [fs.basePath])
+
+    trapPrompts(command)
+
+    await command.exec()
+
+    await assert.fileExists('tsconfig.json')
+    const config = await fs.contentsJson('tsconfig.json')
+
+    assert.deepEqual(config.compilerOptions.target, 'ESNext')
+    assert.deepEqual(config.compilerOptions.lib[0], 'ESNext')
+    assert.deepEqual(config.compilerOptions.module, 'NodeNext')
+  })
 })
