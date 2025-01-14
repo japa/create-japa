@@ -297,8 +297,9 @@ test.group('install', (group) => {
       { agent: 'pnpm/5.0.0 node/v15.0.0 darwin x64', lockFile: 'pnpm-lock.yaml' },
       { agent: 'yarn/1.22.5 npm/? node/v15.0.0 darwin x64', lockFile: 'yarn.lock' },
     ])
-    .run(async ({ assert, fs }, { agent, lockFile }) => {
+    .run(async ({ assert, fs, cleanup }, { agent, lockFile }) => {
       process.env.npm_config_user_agent = agent
+      cleanup(() => (process.env.npm_config_user_agent = undefined))
 
       InstallJapa.restorePackageInstall()
 
@@ -308,8 +309,6 @@ test.group('install', (group) => {
 
       await command.exec()
       await assert.fileExists(`${lockFile}`)
-
-      process.env.npm_config_user_agent = undefined
     })
     .disableTimeout()
 
