@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: ['lts/iron', 'lts/jod', 'latest']
+        node-version: ['lts/jod', 'latest']
 
     steps:
       - name: Checkout code
@@ -33,7 +33,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        node-version: ['lts/iron', 'lts/jod', 'latest']
+        node-version: ['lts/jod', 'latest']
 
     steps:
       - name: Checkout code

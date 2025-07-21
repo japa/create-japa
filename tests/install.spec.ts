@@ -264,9 +264,15 @@ test.group('install', (group) => {
     const pkg = await fs.contentsJson('package.json')
 
     assert.deepEqual(pkg.type, 'module')
-    assert.deepEqual(pkg.scripts, {
-      test: 'node --import ts-node-maintained/register/esm --enable-source-maps bin/test.ts',
-    })
+    if (process.version.includes('v22')) {
+      assert.deepEqual(pkg.scripts, {
+        test: 'node --experimental-transform-types --enable-source-maps bin/test.ts',
+      })
+    } else {
+      assert.deepEqual(pkg.scripts, {
+        test: 'node --enable-source-maps bin/test.ts',
+      })
+    }
   })
 
   test('should not overwrite existing package.json', async ({ assert, fs }) => {
@@ -284,18 +290,24 @@ test.group('install', (group) => {
     const pkg = await fs.contentsJson('package.json')
 
     assert.deepEqual(pkg.type, 'module')
-    assert.deepEqual(pkg.scripts, {
-      test: 'node --import ts-node-maintained/register/esm --enable-source-maps bin/test.ts',
-    })
+    if (process.version.includes('v22')) {
+      assert.deepEqual(pkg.scripts, {
+        test: 'node --experimental-transform-types --enable-source-maps bin/test.ts',
+      })
+    } else {
+      assert.deepEqual(pkg.scripts, {
+        test: 'node --enable-source-maps bin/test.ts',
+      })
+    }
     assert.deepEqual(pkg.name, 'foo')
     assert.deepEqual(pkg.description, 'blabla')
   })
 
   test('install dependencies using detected package manager - {agent}')
     .with([
-      { agent: 'npm/7.0.0 node/v15.0.0 darwin x64', lockFile: 'package-lock.json' },
-      { agent: 'pnpm/5.0.0 node/v15.0.0 darwin x64', lockFile: 'pnpm-lock.yaml' },
-      { agent: 'yarn/1.22.5 npm/? node/v15.0.0 darwin x64', lockFile: 'yarn.lock' },
+      { agent: 'npm/11.0.0 node/v24.0.0 darwin x64', lockFile: 'package-lock.json' },
+      { agent: 'pnpm/10.0.0 node/v24.0.0 darwin x64', lockFile: 'pnpm-lock.yaml' },
+      { agent: 'yarn/1.22.5 node/v24.0.0 darwin x64', lockFile: 'yarn.lock' },
     ])
     .run(async ({ assert, fs, cleanup }, { agent, lockFile }) => {
       process.env.npm_config_user_agent = agent

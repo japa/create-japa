@@ -279,7 +279,9 @@ export class InstallJapa extends BaseCommand {
 
     const testScript =
       this.projectType === 'typescript'
-        ? 'node --import ts-node-maintained/register/esm --enable-source-maps bin/test.ts'
+        ? process.version.includes('v22')
+          ? 'node --experimental-transform-types --enable-source-maps bin/test.ts'
+          : 'node --enable-source-maps bin/test.ts'
         : 'node bin/test.js'
 
     /**
@@ -289,8 +291,6 @@ export class InstallJapa extends BaseCommand {
       await this.#createNewPkgJson(basename(this.destination), testScript)
       await this.#installPackages([
         ...this.#packageToInstall.map((pkg) => `${pkg}@latest`),
-        'ts-node-maintained',
-        '@swc/core',
         'typescript',
       ])
 
