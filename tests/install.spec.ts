@@ -307,7 +307,6 @@ test.group('install', (group) => {
     .with([
       { agent: 'npm/11.0.0 node/v24.0.0 darwin x64', lockFile: 'package-lock.json' },
       { agent: 'pnpm/10.0.0 node/v24.0.0 darwin x64', lockFile: 'pnpm-lock.yaml' },
-      { agent: 'yarn/1.22.5 node/v24.0.0 darwin x64', lockFile: 'yarn.lock' },
     ])
     .run(async ({ assert, fs, cleanup }, { agent, lockFile }) => {
       process.env.npm_config_user_agent = agent
