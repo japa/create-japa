@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import { PluginChoice } from './types.js'
+import { type PluginChoice } from './types.js'
 
 export const PLUGINS = [
   {

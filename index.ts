@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import { BaseCommand, HelpCommand, Kernel } from '@adonisjs/ace'
+import { type BaseCommand, HelpCommand, Kernel } from '@adonisjs/ace'
 import { InstallJapa } from './src/install_japa.js'
 
 Kernel.defaultCommand = InstallJapa
