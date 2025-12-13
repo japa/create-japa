@@ -56,7 +56,7 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@adonisjs/ace": "^13.4.0",
+    "@adonisjs/ace": "^14.0.1-next.3",
     "@antfu/install-pkg": "^1.1.0",
     "edge.js": "^6.3.0",
     "gradient-string": "^3.0.0",
@@ -115,7 +115,10 @@
   },
   "prettier": "@adonisjs/prettier-config",
   "tsdown": {
-    "entry": ["index.ts", "bin/run.ts"],
+    "entry": [
+      "index.ts",
+      "bin/run.ts"
+    ],
     "outDir": "./build",
     "clean": true,
     "format": "esm",
