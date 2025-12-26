@@ -20,7 +20,7 @@ import { basename, dirname, join, relative } from 'node:path'
 import type { PluginChoice } from './types.js'
 import { ADDITIONAL_PLUGINS, ASSERTION_CHOICES, PROJECT_TYPES } from './constants.js'
 
-const TEMPLATES_DIR = join(dirname(fileURLToPath(import.meta.url)), '../templates')
+const TEMPLATES_DIR = join(dirname(fileURLToPath(import.meta.url)), './templates')
 
 export class InstallJapa extends BaseCommand {
   static #isPackageInstallFaked = false
